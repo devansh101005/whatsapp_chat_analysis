@@ -29,6 +29,7 @@ def fetch_stats(selected_user,df):
     for message in df['message']:
         words.extend(message.split())
 
+
         # fetch number of media messages
         num_media_messages = df[df['message'] == '<Media omitted>\n'].shape[0]
 

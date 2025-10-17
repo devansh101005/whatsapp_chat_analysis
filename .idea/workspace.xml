@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="4cad0100-3ba9-4f92-bfeb-162ee9a2700d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/helper.py" beforeDir="false" afterPath="$PROJECT_DIR$/helper.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,6 +22,9 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/helper.py" root0="SKIP_INSPECTION" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
@@ -64,7 +67,7 @@
       <option name="presentableId" value="Default" />
       <updated>1760429175634</updated>
       <workItem from="1760429188747" duration="2354000" />
-      <workItem from="1760608527884" duration="8185000" />
+      <workItem from="1760608527884" duration="10458000" />
     </task>
     <servers />
   </component>
