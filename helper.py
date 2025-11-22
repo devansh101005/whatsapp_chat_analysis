@@ -4,6 +4,7 @@ import pandas as pd
 from collections import Counter
 import emoji
 import seaborn as sns
+import pickle
 extract=URLExtract()
 
 
@@ -167,4 +168,23 @@ def activity_heatmap(selected_user,df):
     user_heatmap = df.pivot_table(index='day_name', columns='period', values='message', aggfunc='count').fillna(0)
 
     return user_heatmap
+
+
+model = pickle.load(open("sentiment_model.pkl", "rb"))
+vectorizer = pickle.load(open("sentiment_vectorizer.pkl", "rb"))
+
+
+def ml_sentiment(selected_user, df):
+    temp = df
+    if selected_user != "Overall":
+        temp = temp[temp['user'] == selected_user]
+
+    messages = temp['message']
+    X = vectorizer.transform(messages)
+
+    preds = model.predict(X)
+    temp['sentiment'] = preds
+
+    result = temp['sentiment'].value_counts().replace({0: "Negative", 1: "Positive"})
+    return result
 
