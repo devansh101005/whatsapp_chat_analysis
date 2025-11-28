@@ -15,6 +15,7 @@ import nltk
 nltk.download('stopwords')
 from nltk.corpus import stopwords
 import re
+import networkx as nx
 #from googletrans import Translator
 extract=URLExtract()
 #translator = Translator()
@@ -453,6 +454,91 @@ def topic_modeling(selected_user, df, num_topics=5):
     topics = lda_model.print_topics(num_words=6)
 
     return topics
+
+# ---------------- TOXICITY DETECTION (INNOVATION) ---------------- #
+
+tox_tokenizer = AutoTokenizer.from_pretrained("unitary/toxic-bert")
+tox_model = AutoModelForSequenceClassification.from_pretrained("unitary/toxic-bert")
+
+tox_labels = ['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate']
+
+
+def toxicity_analysis(selected_user, df):
+    temp = df.copy()
+
+    if selected_user != "Overall":
+        temp = temp[temp['user'] == selected_user]
+
+    messages = temp['message'].tolist()
+
+    if len(messages) == 0:
+        return pd.DataFrame(), pd.Series(dtype=float)
+
+    all_rows = []
+    batch_size = 32
+
+    for i in range(0, len(messages), batch_size):
+        batch = messages[i:i+batch_size]
+        inputs = tox_tokenizer(
+            batch,
+            return_tensors="pt",
+            truncation=True,
+            padding=True,
+            max_length=256
+        )
+
+        with torch.no_grad():
+            outputs = tox_model(**inputs)
+
+        # Multi-label probabilities
+        scores = torch.sigmoid(outputs.logits).cpu().numpy()
+
+        for msg, score_vec in zip(batch, scores):
+            row = {"message": msg}
+            for label, s in zip(tox_labels, score_vec):
+                row[label] = float(s)
+            all_rows.append(row)
+
+    tox_df = pd.DataFrame(all_rows)
+    tox_df["max_toxic"] = tox_df[tox_labels].max(axis=1)
+
+    # Overall toxicity profile (mean per category)
+    summary = tox_df[tox_labels].mean().sort_values(ascending=False)
+
+    return tox_df, summary
+
+
+# ---------------- SOCIAL NETWORK GRAPH (INNOVATION) ---------------- #
+
+def build_conversation_graph(df):
+    """
+    Build a directed graph where an edge A -> B means
+    after A's message, B replied next.
+    Edge weight = number of such transitions.
+    """
+    G = nx.DiGraph()
+
+    # We assume df is in chronological order
+    users_series = df['user'].tolist()
+
+    for i in range(len(users_series) - 1):
+        u = users_series[i]
+        v = users_series[i + 1]
+
+        # ignore system messages
+        if u == "group_notification" or v == "group_notification":
+            continue
+
+        if u == v:
+            continue
+
+        if G.has_edge(u, v):
+            G[u][v]['weight'] += 1
+        else:
+            G.add_edge(u, v, weight=1)
+
+    return G
+
 
 
 

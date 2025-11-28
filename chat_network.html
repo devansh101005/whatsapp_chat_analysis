@@ -1,0 +1,163 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 600px;
+                 background-color: #222222;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "font": {"color": "white"}, "id": "Amey Gautam SNU CSE", "label": "Amey Gautam SNU CSE", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ruchir Snu Lucknow", "label": "Ruchir Snu Lucknow", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "+91 62907 42854", "label": "+91 62907 42854", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "+91 93542 75995", "label": "+91 93542 75995", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "+91 63647 13301", "label": "+91 63647 13301", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "+91 93151 16921", "label": "+91 93151 16921", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Shreyas A", "label": "Shreyas A", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "+91 96500 81318", "label": "+91 96500 81318", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "+91 96677 06428", "label": "+91 96677 06428", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "+91 93190 01025", "label": "+91 93190 01025", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "+91 96764 01604", "label": "+91 96764 01604", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "+91 82186 28177", "label": "+91 82186 28177", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "+91 98305 65103", "label": "+91 98305 65103", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "+91 92892 39459", "label": "+91 92892 39459", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Piyush SNU CSE", "label": "Piyush SNU CSE", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "+91 97170 94960", "label": "+91 97170 94960", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Suryansh 229", "label": "Suryansh 229", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Arnab M CSE", "label": "Arnab M CSE", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Shree Ji SNU CSE", "label": "Shree Ji SNU CSE", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "+91 75062 89336", "label": "+91 75062 89336", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "+91 92235 88762", "label": "+91 92235 88762", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "+91 98210 99038", "label": "+91 98210 99038", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "+91 74793 34559", "label": "+91 74793 34559", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "+91 75034 29756", "label": "+91 75034 29756", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "+91 84469 97322", "label": "+91 84469 97322", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "+91 81048 69891", "label": "+91 81048 69891", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Moti Kaali AURAT", "label": "Moti Kaali AURAT", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Akash Snu", "label": "Akash Snu", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "+91 88261 30327", "label": "+91 88261 30327", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "+91 98105 84958", "label": "+91 98105 84958", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Charvi sNu Cse", "label": "Charvi sNu Cse", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "+91 81783 28945", "label": "+91 81783 28945", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "+91 79997 75889", "label": "+91 79997 75889", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Prateek Goyal SNU CSE", "label": "Prateek Goyal SNU CSE", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "+91 93804 26996", "label": "+91 93804 26996", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "+91 88005 76791", "label": "+91 88005 76791", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Poorab SNU cSE", "label": "Poorab SNU cSE", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "+91 85270 68018", "label": "+91 85270 68018", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Devansh Pandey", "label": "Devansh Pandey", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "+91 82760 37134", "label": "+91 82760 37134", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "+91 99531 76795", "label": "+91 99531 76795", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Gaurav Varanasi Snu Cse", "label": "Gaurav Varanasi Snu Cse", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Eklavya SNU CSE", "label": "Eklavya SNU CSE", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "+91 98184 79663", "label": "+91 98184 79663", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ridhima Garg SNU CSE", "label": "Ridhima Garg SNU CSE", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "+91 81974 35288", "label": "+91 81974 35288", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Anshika Pandey CSE Snu", "label": "Anshika Pandey CSE Snu", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Abhinav Bharat Kaushik SNU", "label": "Abhinav Bharat Kaushik SNU", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "+91 70674 66990", "label": "+91 70674 66990", "shape": "dot", "size": 10}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "Amey Gautam SNU CSE", "to": "Ruchir Snu Lucknow", "width": 1}, {"arrows": "to", "from": "Amey Gautam SNU CSE", "to": "+91 62907 42854", "width": 13}, {"arrows": "to", "from": "Amey Gautam SNU CSE", "to": "+91 93542 75995", "width": 4}, {"arrows": "to", "from": "Amey Gautam SNU CSE", "to": "+91 63647 13301", "width": 5}, {"arrows": "to", "from": "Amey Gautam SNU CSE", "to": "+91 93151 16921", "width": 2}, {"arrows": "to", "from": "Amey Gautam SNU CSE", "to": "Shreyas A", "width": 20}, {"arrows": "to", "from": "Amey Gautam SNU CSE", "to": "+91 96500 81318", "width": 2}, {"arrows": "to", "from": "Amey Gautam SNU CSE", "to": "+91 96677 06428", "width": 1}, {"arrows": "to", "from": "Amey Gautam SNU CSE", "to": "+91 93190 01025", "width": 1}, {"arrows": "to", "from": "Amey Gautam SNU CSE", "to": "+91 96764 01604", "width": 2}, {"arrows": "to", "from": "Amey Gautam SNU CSE", "to": "+91 82186 28177", "width": 2}, {"arrows": "to", "from": "Amey Gautam SNU CSE", "to": "+91 98305 65103", "width": 3}, {"arrows": "to", "from": "Amey Gautam SNU CSE", "to": "+91 92892 39459", "width": 4}, {"arrows": "to", "from": "Amey Gautam SNU CSE", "to": "Piyush SNU CSE", "width": 1}, {"arrows": "to", "from": "Amey Gautam SNU CSE", "to": "+91 97170 94960", "width": 2}, {"arrows": "to", "from": "Amey Gautam SNU CSE", "to": "Suryansh 229", "width": 1}, {"arrows": "to", "from": "Amey Gautam SNU CSE", "to": "Arnab M CSE", "width": 1}, {"arrows": "to", "from": "Amey Gautam SNU CSE", "to": "Shree Ji SNU CSE", "width": 1}, {"arrows": "to", "from": "Amey Gautam SNU CSE", "to": "+91 75062 89336", "width": 1}, {"arrows": "to", "from": "Amey Gautam SNU CSE", "to": "+91 92235 88762", "width": 1}, {"arrows": "to", "from": "Amey Gautam SNU CSE", "to": "+91 98210 99038", "width": 1}, {"arrows": "to", "from": "Amey Gautam SNU CSE", "to": "+91 74793 34559", "width": 1}, {"arrows": "to", "from": "Amey Gautam SNU CSE", "to": "+91 75034 29756", "width": 1}, {"arrows": "to", "from": "Amey Gautam SNU CSE", "to": "+91 84469 97322", "width": 1}, {"arrows": "to", "from": "Amey Gautam SNU CSE", "to": "+91 81048 69891", "width": 1}, {"arrows": "to", "from": "Ruchir Snu Lucknow", "to": "+91 62907 42854", "width": 1}, {"arrows": "to", "from": "Ruchir Snu Lucknow", "to": "Moti Kaali AURAT", "width": 1}, {"arrows": "to", "from": "Ruchir Snu Lucknow", "to": "Akash Snu", "width": 1}, {"arrows": "to", "from": "+91 62907 42854", "to": "Amey Gautam SNU CSE", "width": 12}, {"arrows": "to", "from": "+91 62907 42854", "to": "+91 93151 16921", "width": 2}, {"arrows": "to", "from": "+91 62907 42854", "to": "+91 93542 75995", "width": 1}, {"arrows": "to", "from": "+91 62907 42854", "to": "+91 88261 30327", "width": 1}, {"arrows": "to", "from": "+91 62907 42854", "to": "+91 98105 84958", "width": 2}, {"arrows": "to", "from": "+91 62907 42854", "to": "Charvi sNu Cse", "width": 1}, {"arrows": "to", "from": "+91 62907 42854", "to": "+91 96677 06428", "width": 2}, {"arrows": "to", "from": "+91 62907 42854", "to": "Arnab M CSE", "width": 1}, {"arrows": "to", "from": "+91 62907 42854", "to": "Piyush SNU CSE", "width": 1}, {"arrows": "to", "from": "+91 62907 42854", "to": "+91 96764 01604", "width": 2}, {"arrows": "to", "from": "+91 62907 42854", "to": "+91 92892 39459", "width": 1}, {"arrows": "to", "from": "+91 81783 28945", "to": "+91 62907 42854", "width": 1}, {"arrows": "to", "from": "+91 81783 28945", "to": "Arnab M CSE", "width": 1}, {"arrows": "to", "from": "+91 81783 28945", "to": "Amey Gautam SNU CSE", "width": 1}, {"arrows": "to", "from": "+91 93542 75995", "to": "Amey Gautam SNU CSE", "width": 2}, {"arrows": "to", "from": "+91 93542 75995", "to": "+91 79997 75889", "width": 1}, {"arrows": "to", "from": "+91 93542 75995", "to": "+91 62907 42854", "width": 2}, {"arrows": "to", "from": "+91 93542 75995", "to": "Piyush SNU CSE", "width": 1}, {"arrows": "to", "from": "+91 93542 75995", "to": "+91 82186 28177", "width": 2}, {"arrows": "to", "from": "+91 93542 75995", "to": "Prateek Goyal SNU CSE", "width": 1}, {"arrows": "to", "from": "+91 93542 75995", "to": "+91 92892 39459", "width": 2}, {"arrows": "to", "from": "+91 93542 75995", "to": "+91 63647 13301", "width": 1}, {"arrows": "to", "from": "+91 93542 75995", "to": "+91 74793 34559", "width": 1}, {"arrows": "to", "from": "+91 63647 13301", "to": "+91 79997 75889", "width": 1}, {"arrows": "to", "from": "+91 63647 13301", "to": "Amey Gautam SNU CSE", "width": 5}, {"arrows": "to", "from": "+91 63647 13301", "to": "+91 62907 42854", "width": 2}, {"arrows": "to", "from": "+91 63647 13301", "to": "+91 96677 06428", "width": 1}, {"arrows": "to", "from": "+91 63647 13301", "to": "+91 92892 39459", "width": 2}, {"arrows": "to", "from": "+91 63647 13301", "to": "+91 96500 81318", "width": 1}, {"arrows": "to", "from": "+91 63647 13301", "to": "+91 93804 26996", "width": 1}, {"arrows": "to", "from": "+91 63647 13301", "to": "+91 74793 34559", "width": 2}, {"arrows": "to", "from": "+91 63647 13301", "to": "+91 81048 69891", "width": 1}, {"arrows": "to", "from": "+91 63647 13301", "to": "+91 93151 16921", "width": 1}, {"arrows": "to", "from": "+91 63647 13301", "to": "+91 97170 94960", "width": 1}, {"arrows": "to", "from": "+91 63647 13301", "to": "+91 93542 75995", "width": 1}, {"arrows": "to", "from": "+91 63647 13301", "to": "Shreyas A", "width": 1}, {"arrows": "to", "from": "+91 79997 75889", "to": "+91 93151 16921", "width": 1}, {"arrows": "to", "from": "+91 79997 75889", "to": "+91 96677 06428", "width": 1}, {"arrows": "to", "from": "+91 79997 75889", "to": "Amey Gautam SNU CSE", "width": 1}, {"arrows": "to", "from": "+91 93151 16921", "to": "+91 79997 75889", "width": 1}, {"arrows": "to", "from": "+91 93151 16921", "to": "+91 96500 81318", "width": 2}, {"arrows": "to", "from": "+91 93151 16921", "to": "+91 63647 13301", "width": 3}, {"arrows": "to", "from": "+91 93151 16921", "to": "+91 62907 42854", "width": 1}, {"arrows": "to", "from": "+91 93151 16921", "to": "Suryansh 229", "width": 2}, {"arrows": "to", "from": "+91 93151 16921", "to": "Moti Kaali AURAT", "width": 1}, {"arrows": "to", "from": "+91 93151 16921", "to": "+91 93542 75995", "width": 1}, {"arrows": "to", "from": "+91 93151 16921", "to": "+91 82186 28177", "width": 4}, {"arrows": "to", "from": "+91 93151 16921", "to": "+91 93804 26996", "width": 1}, {"arrows": "to", "from": "+91 93151 16921", "to": "Amey Gautam SNU CSE", "width": 1}, {"arrows": "to", "from": "+91 93151 16921", "to": "+91 88005 76791", "width": 1}, {"arrows": "to", "from": "+91 93151 16921", "to": "Poorab SNU cSE", "width": 1}, {"arrows": "to", "from": "+91 93151 16921", "to": "+91 85270 68018", "width": 1}, {"arrows": "to", "from": "+91 96677 06428", "to": "+91 62907 42854", "width": 2}, {"arrows": "to", "from": "+91 96677 06428", "to": "Poorab SNU cSE", "width": 1}, {"arrows": "to", "from": "+91 96677 06428", "to": "+91 63647 13301", "width": 1}, {"arrows": "to", "from": "+91 96677 06428", "to": "Suryansh 229", "width": 1}, {"arrows": "to", "from": "+91 96677 06428", "to": "+91 81048 69891", "width": 1}, {"arrows": "to", "from": "+91 96677 06428", "to": "+91 82186 28177", "width": 1}, {"arrows": "to", "from": "+91 96677 06428", "to": "+91 81783 28945", "width": 1}, {"arrows": "to", "from": "+91 96500 81318", "to": "+91 93151 16921", "width": 2}, {"arrows": "to", "from": "+91 96500 81318", "to": "+91 93542 75995", "width": 1}, {"arrows": "to", "from": "+91 96500 81318", "to": "Amey Gautam SNU CSE", "width": 2}, {"arrows": "to", "from": "+91 96500 81318", "to": "+91 98305 65103", "width": 2}, {"arrows": "to", "from": "+91 96500 81318", "to": "+91 92892 39459", "width": 2}, {"arrows": "to", "from": "+91 96500 81318", "to": "Devansh Pandey", "width": 1}, {"arrows": "to", "from": "+91 96500 81318", "to": "+91 63647 13301", "width": 1}, {"arrows": "to", "from": "+91 96500 81318", "to": "Shreyas A", "width": 1}, {"arrows": "to", "from": "+91 96500 81318", "to": "+91 81048 69891", "width": 1}, {"arrows": "to", "from": "+91 96500 81318", "to": "+91 96764 01604", "width": 1}, {"arrows": "to", "from": "Shreyas A", "to": "+91 96500 81318", "width": 1}, {"arrows": "to", "from": "Shreyas A", "to": "+91 92892 39459", "width": 1}, {"arrows": "to", "from": "Shreyas A", "to": "+91 93542 75995", "width": 1}, {"arrows": "to", "from": "Shreyas A", "to": "+91 93151 16921", "width": 1}, {"arrows": "to", "from": "Shreyas A", "to": "+91 82186 28177", "width": 1}, {"arrows": "to", "from": "Shreyas A", "to": "+91 93804 26996", "width": 1}, {"arrows": "to", "from": "Shreyas A", "to": "+91 63647 13301", "width": 2}, {"arrows": "to", "from": "Shreyas A", "to": "+91 82760 37134", "width": 1}, {"arrows": "to", "from": "Shreyas A", "to": "+91 74793 34559", "width": 1}, {"arrows": "to", "from": "Shreyas A", "to": "+91 98105 84958", "width": 1}, {"arrows": "to", "from": "Shreyas A", "to": "Amey Gautam SNU CSE", "width": 15}, {"arrows": "to", "from": "Shreyas A", "to": "Arnab M CSE", "width": 2}, {"arrows": "to", "from": "Shreyas A", "to": "Suryansh 229", "width": 2}, {"arrows": "to", "from": "Shreyas A", "to": "+91 99531 76795", "width": 1}, {"arrows": "to", "from": "Shreyas A", "to": "Gaurav Varanasi Snu Cse", "width": 1}, {"arrows": "to", "from": "Shreyas A", "to": "+91 96677 06428", "width": 1}, {"arrows": "to", "from": "+91 88261 30327", "to": "+91 62907 42854", "width": 1}, {"arrows": "to", "from": "+91 88261 30327", "to": "+91 82186 28177", "width": 1}, {"arrows": "to", "from": "Suryansh 229", "to": "Eklavya SNU CSE", "width": 1}, {"arrows": "to", "from": "Suryansh 229", "to": "Shreyas A", "width": 3}, {"arrows": "to", "from": "Suryansh 229", "to": "Piyush SNU CSE", "width": 1}, {"arrows": "to", "from": "Suryansh 229", "to": "+91 98184 79663", "width": 1}, {"arrows": "to", "from": "Suryansh 229", "to": "+91 84469 97322", "width": 1}, {"arrows": "to", "from": "Suryansh 229", "to": "Amey Gautam SNU CSE", "width": 1}, {"arrows": "to", "from": "Suryansh 229", "to": "Arnab M CSE", "width": 1}, {"arrows": "to", "from": "Suryansh 229", "to": "+91 74793 34559", "width": 1}, {"arrows": "to", "from": "Suryansh 229", "to": "+91 93151 16921", "width": 1}, {"arrows": "to", "from": "Eklavya SNU CSE", "to": "+91 96500 81318", "width": 1}, {"arrows": "to", "from": "Eklavya SNU CSE", "to": "Moti Kaali AURAT", "width": 1}, {"arrows": "to", "from": "Eklavya SNU CSE", "to": "+91 93151 16921", "width": 1}, {"arrows": "to", "from": "+91 98305 65103", "to": "Ridhima Garg SNU CSE", "width": 1}, {"arrows": "to", "from": "+91 98305 65103", "to": "Moti Kaali AURAT", "width": 1}, {"arrows": "to", "from": "+91 98305 65103", "to": "Amey Gautam SNU CSE", "width": 2}, {"arrows": "to", "from": "+91 98305 65103", "to": "+91 92892 39459", "width": 3}, {"arrows": "to", "from": "+91 98305 65103", "to": "Arnab M CSE", "width": 2}, {"arrows": "to", "from": "Ridhima Garg SNU CSE", "to": "+91 93804 26996", "width": 1}, {"arrows": "to", "from": "+91 93804 26996", "to": "+91 88005 76791", "width": 1}, {"arrows": "to", "from": "+91 93804 26996", "to": "Moti Kaali AURAT", "width": 1}, {"arrows": "to", "from": "+91 93804 26996", "to": "+91 82186 28177", "width": 2}, {"arrows": "to", "from": "+91 93804 26996", "to": "Piyush SNU CSE", "width": 1}, {"arrows": "to", "from": "+91 93804 26996", "to": "+91 93151 16921", "width": 1}, {"arrows": "to", "from": "+91 93804 26996", "to": "+91 63647 13301", "width": 1}, {"arrows": "to", "from": "+91 93804 26996", "to": "+91 97170 94960", "width": 1}, {"arrows": "to", "from": "+91 93804 26996", "to": "Amey Gautam SNU CSE", "width": 1}, {"arrows": "to", "from": "+91 88005 76791", "to": "Amey Gautam SNU CSE", "width": 1}, {"arrows": "to", "from": "+91 81974 35288", "to": "Amey Gautam SNU CSE", "width": 1}, {"arrows": "to", "from": "+91 81974 35288", "to": "Anshika Pandey CSE Snu", "width": 38}, {"arrows": "to", "from": "+91 98105 84958", "to": "+91 62907 42854", "width": 1}, {"arrows": "to", "from": "+91 98105 84958", "to": "Amey Gautam SNU CSE", "width": 2}, {"arrows": "to", "from": "Charvi sNu Cse", "to": "+91 93542 75995", "width": 1}, {"arrows": "to", "from": "Poorab SNU cSE", "to": "Amey Gautam SNU CSE", "width": 1}, {"arrows": "to", "from": "Poorab SNU cSE", "to": "+91 82186 28177", "width": 1}, {"arrows": "to", "from": "Poorab SNU cSE", "to": "Piyush SNU CSE", "width": 1}, {"arrows": "to", "from": "+91 93190 01025", "to": "Amey Gautam SNU CSE", "width": 1}, {"arrows": "to", "from": "Arnab M CSE", "to": "+91 62907 42854", "width": 2}, {"arrows": "to", "from": "Arnab M CSE", "to": "+91 63647 13301", "width": 2}, {"arrows": "to", "from": "Arnab M CSE", "to": "+91 98305 65103", "width": 1}, {"arrows": "to", "from": "Arnab M CSE", "to": "+91 82760 37134", "width": 1}, {"arrows": "to", "from": "Arnab M CSE", "to": "Amey Gautam SNU CSE", "width": 1}, {"arrows": "to", "from": "Arnab M CSE", "to": "Shreyas A", "width": 1}, {"arrows": "to", "from": "Arnab M CSE", "to": "+91 82186 28177", "width": 2}, {"arrows": "to", "from": "Arnab M CSE", "to": "Suryansh 229", "width": 1}, {"arrows": "to", "from": "Piyush SNU CSE", "to": "+91 88261 30327", "width": 1}, {"arrows": "to", "from": "Piyush SNU CSE", "to": "+91 93151 16921", "width": 1}, {"arrows": "to", "from": "Piyush SNU CSE", "to": "Moti Kaali AURAT", "width": 1}, {"arrows": "to", "from": "Piyush SNU CSE", "to": "Eklavya SNU CSE", "width": 1}, {"arrows": "to", "from": "Piyush SNU CSE", "to": "+91 74793 34559", "width": 1}, {"arrows": "to", "from": "Piyush SNU CSE", "to": "+91 96500 81318", "width": 1}, {"arrows": "to", "from": "Piyush SNU CSE", "to": "Amey Gautam SNU CSE", "width": 1}, {"arrows": "to", "from": "+91 82186 28177", "to": "Shreyas A", "width": 3}, {"arrows": "to", "from": "+91 82186 28177", "to": "+91 92892 39459", "width": 2}, {"arrows": "to", "from": "+91 82186 28177", "to": "+91 93151 16921", "width": 3}, {"arrows": "to", "from": "+91 82186 28177", "to": "+91 96677 06428", "width": 1}, {"arrows": "to", "from": "+91 82186 28177", "to": "Abhinav Bharat Kaushik SNU", "width": 2}, {"arrows": "to", "from": "+91 82186 28177", "to": "Ruchir Snu Lucknow", "width": 1}, {"arrows": "to", "from": "+91 82186 28177", "to": "Moti Kaali AURAT", "width": 2}, {"arrows": "to", "from": "+91 82186 28177", "to": "Prateek Goyal SNU CSE", "width": 2}, {"arrows": "to", "from": "+91 82186 28177", "to": "Piyush SNU CSE", "width": 1}, {"arrows": "to", "from": "+91 82186 28177", "to": "+91 93804 26996", "width": 2}, {"arrows": "to", "from": "+91 82186 28177", "to": "+91 96500 81318", "width": 1}, {"arrows": "to", "from": "+91 82186 28177", "to": "Arnab M CSE", "width": 1}, {"arrows": "to", "from": "+91 92892 39459", "to": "+91 81048 69891", "width": 4}, {"arrows": "to", "from": "+91 92892 39459", "to": "+91 82186 28177", "width": 1}, {"arrows": "to", "from": "+91 92892 39459", "to": "+91 63647 13301", "width": 1}, {"arrows": "to", "from": "+91 92892 39459", "to": "+91 98305 65103", "width": 3}, {"arrows": "to", "from": "+91 92892 39459", "to": "Devansh Pandey", "width": 1}, {"arrows": "to", "from": "+91 92892 39459", "to": "Amey Gautam SNU CSE", "width": 7}, {"arrows": "to", "from": "+91 92892 39459", "to": "+91 93542 75995", "width": 1}, {"arrows": "to", "from": "+91 92892 39459", "to": "+91 99531 76795", "width": 1}, {"arrows": "to", "from": "+91 92892 39459", "to": "+91 70674 66990", "width": 1}, {"arrows": "to", "from": "+91 92892 39459", "to": "+91 62907 42854", "width": 1}, {"arrows": "to", "from": "+91 81048 69891", "to": "+91 82186 28177", "width": 1}, {"arrows": "to", "from": "+91 81048 69891", "to": "+91 81783 28945", "width": 1}, {"arrows": "to", "from": "+91 81048 69891", "to": "+91 63647 13301", "width": 2}, {"arrows": "to", "from": "+91 81048 69891", "to": "+91 96500 81318", "width": 1}, {"arrows": "to", "from": "+91 81048 69891", "to": "+91 92892 39459", "width": 2}, {"arrows": "to", "from": "+91 81048 69891", "to": "Amey Gautam SNU CSE", "width": 1}, {"arrows": "to", "from": "Moti Kaali AURAT", "to": "+91 96500 81318", "width": 1}, {"arrows": "to", "from": "Moti Kaali AURAT", "to": "+91 96764 01604", "width": 1}, {"arrows": "to", "from": "Moti Kaali AURAT", "to": "Shreyas A", "width": 1}, {"arrows": "to", "from": "Moti Kaali AURAT", "to": "Devansh Pandey", "width": 1}, {"arrows": "to", "from": "Moti Kaali AURAT", "to": "+91 82186 28177", "width": 3}, {"arrows": "to", "from": "Moti Kaali AURAT", "to": "Prateek Goyal SNU CSE", "width": 2}, {"arrows": "to", "from": "Moti Kaali AURAT", "to": "+91 93542 75995", "width": 2}, {"arrows": "to", "from": "Moti Kaali AURAT", "to": "Abhinav Bharat Kaushik SNU", "width": 2}, {"arrows": "to", "from": "Moti Kaali AURAT", "to": "Poorab SNU cSE", "width": 1}, {"arrows": "to", "from": "Moti Kaali AURAT", "to": "Ruchir Snu Lucknow", "width": 1}, {"arrows": "to", "from": "Moti Kaali AURAT", "to": "Akash Snu", "width": 1}, {"arrows": "to", "from": "Moti Kaali AURAT", "to": "+91 93804 26996", "width": 1}, {"arrows": "to", "from": "Moti Kaali AURAT", "to": "+91 93151 16921", "width": 1}, {"arrows": "to", "from": "Devansh Pandey", "to": "Moti Kaali AURAT", "width": 2}, {"arrows": "to", "from": "Devansh Pandey", "to": "+91 93151 16921", "width": 1}, {"arrows": "to", "from": "Devansh Pandey", "to": "Abhinav Bharat Kaushik SNU", "width": 2}, {"arrows": "to", "from": "Devansh Pandey", "to": "Shreyas A", "width": 1}, {"arrows": "to", "from": "+91 96764 01604", "to": "+91 96500 81318", "width": 1}, {"arrows": "to", "from": "+91 96764 01604", "to": "Shreyas A", "width": 3}, {"arrows": "to", "from": "+91 96764 01604", "to": "Amey Gautam SNU CSE", "width": 2}, {"arrows": "to", "from": "+91 96764 01604", "to": "+91 74793 34559", "width": 1}, {"arrows": "to", "from": "+91 96764 01604", "to": "+91 62907 42854", "width": 1}, {"arrows": "to", "from": "Abhinav Bharat Kaushik SNU", "to": "Moti Kaali AURAT", "width": 5}, {"arrows": "to", "from": "Abhinav Bharat Kaushik SNU", "to": "Prateek Goyal SNU CSE", "width": 1}, {"arrows": "to", "from": "Abhinav Bharat Kaushik SNU", "to": "Devansh Pandey", "width": 1}, {"arrows": "to", "from": "Abhinav Bharat Kaushik SNU", "to": "+91 93804 26996", "width": 1}, {"arrows": "to", "from": "Prateek Goyal SNU CSE", "to": "Abhinav Bharat Kaushik SNU", "width": 1}, {"arrows": "to", "from": "Prateek Goyal SNU CSE", "to": "+91 82186 28177", "width": 1}, {"arrows": "to", "from": "Prateek Goyal SNU CSE", "to": "Moti Kaali AURAT", "width": 3}, {"arrows": "to", "from": "Prateek Goyal SNU CSE", "to": "Devansh Pandey", "width": 1}, {"arrows": "to", "from": "Akash Snu", "to": "Devansh Pandey", "width": 1}, {"arrows": "to", "from": "Akash Snu", "to": "Abhinav Bharat Kaushik SNU", "width": 1}, {"arrows": "to", "from": "+91 97170 94960", "to": "+91 92892 39459", "width": 1}, {"arrows": "to", "from": "+91 97170 94960", "to": "+91 93151 16921", "width": 1}, {"arrows": "to", "from": "+91 97170 94960", "to": "+91 96764 01604", "width": 1}, {"arrows": "to", "from": "+91 97170 94960", "to": "+91 70674 66990", "width": 1}, {"arrows": "to", "from": "+91 97170 94960", "to": "+91 82760 37134", "width": 1}, {"arrows": "to", "from": "+91 74793 34559", "to": "+91 96500 81318", "width": 1}, {"arrows": "to", "from": "+91 74793 34559", "to": "+91 96764 01604", "width": 1}, {"arrows": "to", "from": "+91 74793 34559", "to": "Shreyas A", "width": 1}, {"arrows": "to", "from": "+91 74793 34559", "to": "+91 97170 94960", "width": 1}, {"arrows": "to", "from": "+91 74793 34559", "to": "Suryansh 229", "width": 2}, {"arrows": "to", "from": "+91 74793 34559", "to": "+91 93151 16921", "width": 1}, {"arrows": "to", "from": "+91 74793 34559", "to": "Amey Gautam SNU CSE", "width": 2}, {"arrows": "to", "from": "+91 74793 34559", "to": "Eklavya SNU CSE", "width": 1}, {"arrows": "to", "from": "+91 82760 37134", "to": "+91 74793 34559", "width": 1}, {"arrows": "to", "from": "+91 82760 37134", "to": "Amey Gautam SNU CSE", "width": 2}, {"arrows": "to", "from": "+91 99531 76795", "to": "Amey Gautam SNU CSE", "width": 1}, {"arrows": "to", "from": "+91 99531 76795", "to": "+91 74793 34559", "width": 1}, {"arrows": "to", "from": "+91 70674 66990", "to": "+91 62907 42854", "width": 1}, {"arrows": "to", "from": "+91 70674 66990", "to": "Arnab M CSE", "width": 1}, {"arrows": "to", "from": "+91 98184 79663", "to": "+91 96500 81318", "width": 1}, {"arrows": "to", "from": "+91 84469 97322", "to": "Suryansh 229", "width": 1}, {"arrows": "to", "from": "+91 84469 97322", "to": "Amey Gautam SNU CSE", "width": 1}, {"arrows": "to", "from": "Shree Ji SNU CSE", "to": "Amey Gautam SNU CSE", "width": 1}, {"arrows": "to", "from": "+91 75062 89336", "to": "+91 63647 13301", "width": 1}, {"arrows": "to", "from": "+91 92235 88762", "to": "Shreyas A", "width": 1}, {"arrows": "to", "from": "+91 75034 29756", "to": "Suryansh 229", "width": 1}, {"arrows": "to", "from": "+91 85270 68018", "to": "Amey Gautam SNU CSE", "width": 1}, {"arrows": "to", "from": "Gaurav Varanasi Snu Cse", "to": "Amey Gautam SNU CSE", "width": 1}, {"arrows": "to", "from": "Anshika Pandey CSE Snu", "to": "+91 81974 35288", "width": 34}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "repulsion": {
+            "centralGravity": 0.33,
+            "damping": 0.09,
+            "nodeDistance": 200,
+            "springConstant": 0.1,
+            "springLength": 110
+        },
+        "solver": "repulsion",
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
