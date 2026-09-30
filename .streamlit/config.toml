@@ -1,0 +1,11 @@
+# Streamlit settings used when running the app (locally or in Docker)
+[server]
+headless = true
+port = 8501
+enableCORS = false
+# "none" stops Streamlit from scanning every imported module (like transformers)
+# on startup, which avoids a flood of harmless torchvision import warnings.
+fileWatcherType = "none"
+
+[theme]
+base = "light"

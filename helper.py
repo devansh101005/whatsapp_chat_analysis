@@ -15,6 +15,7 @@ import nltk
 nltk.download('stopwords')
 from nltk.corpus import stopwords
 import re
+import os
 import networkx as nx
 #from googletrans import Translator
 extract=URLExtract()
@@ -266,18 +267,36 @@ def activity_heatmap(selected_user,df):
     return user_heatmap
 
 
-def translate_to_english(text):
-    try:
-        result = translator.translate(text, src="auto", dest="en")
-        return result.text
-    except:
-        return text
+# Look for a model file inside the "models" folder first, then in the project root.
+def find_model_file(filename):
+    if os.path.exists(os.path.join("models", filename)):
+        return os.path.join("models", filename)
+    return filename
 
-model = pickle.load(open("sentiment_model.pkl", "rb"))
-vectorizer = pickle.load(open("sentiment_vectorizer.pkl", "rb"))
+
+# Models are loaded only when they are first needed (lazy loading).
+# This way the app still starts even if the .pkl files are missing.
+model = None
+vectorizer = None
+
+def load_logreg_model():
+    global model, vectorizer
+    if model is None or vectorizer is None:
+        model_path = find_model_file("sentiment_model.pkl")
+        vect_path = find_model_file("sentiment_vectorizer.pkl")
+        if not os.path.exists(model_path) or not os.path.exists(vect_path):
+            raise FileNotFoundError(
+                "Logistic Regression model not found. "
+                "Please run 'python sentiment_model_train.py' to create it."
+            )
+        model = pickle.load(open(model_path, "rb"))
+        vectorizer = pickle.load(open(vect_path, "rb"))
+    return model, vectorizer
 
 
 def ml_sentiment(selected_user, df):
+    model, vectorizer = load_logreg_model()
+
     temp = df
     if selected_user != "Overall":
         temp = temp[temp['user'] == selected_user]
@@ -301,16 +320,33 @@ def ml_sentiment(selected_user, df):
     return result
 
 
-svm_model = pickle.load(open("svm_sentiment_model.pkl","rb"))
-svm_vectorizer = pickle.load(open("svm_vectorizer.pkl","rb"))
+svm_model = None
+svm_vectorizer = None
+
+def load_svm_model():
+    global svm_model, svm_vectorizer
+    if svm_model is None or svm_vectorizer is None:
+        model_path = find_model_file("svm_sentiment_model.pkl")
+        vect_path = find_model_file("svm_vectorizer.pkl")
+        if not os.path.exists(model_path) or not os.path.exists(vect_path):
+            raise FileNotFoundError(
+                "SVM model not found. "
+                "Please run 'python train_svm.py' to create it."
+            )
+        svm_model = pickle.load(open(model_path, "rb"))
+        svm_vectorizer = pickle.load(open(vect_path, "rb"))
+    return svm_model, svm_vectorizer
+
 
 def svm_sentiment(selected_user, df):
+    svm_model, svm_vectorizer = load_svm_model()
+
     temp = df
     if selected_user != "Overall":
         temp = temp[temp['user'] == selected_user]
 
     translated = temp['message'].apply(translate_to_english)
-    X = vectorizer.transform(translated)
+    X = svm_vectorizer.transform(translated)
     preds = svm_model.predict(X)
     #temp['sentiment'] = preds
     temp['sentiment'] = preds
@@ -325,10 +361,20 @@ def svm_sentiment(selected_user, df):
     return result
 
 
-bert_tokenizer = AutoTokenizer.from_pretrained("nlptown/bert-base-multilingual-uncased-sentiment")
-bert_model = AutoModelForSequenceClassification.from_pretrained("nlptown/bert-base-multilingual-uncased-sentiment")
+# BERT is heavy, so we load it only when a BERT function is first called.
+bert_tokenizer = None
+bert_model = None
+
+def load_bert_model():
+    global bert_tokenizer, bert_model
+    if bert_tokenizer is None or bert_model is None:
+        bert_tokenizer = AutoTokenizer.from_pretrained("nlptown/bert-base-multilingual-uncased-sentiment")
+        bert_model = AutoModelForSequenceClassification.from_pretrained("nlptown/bert-base-multilingual-uncased-sentiment")
+    return bert_tokenizer, bert_model
+
 
 def bert_predict_sentiment(text):
+    bert_tokenizer, bert_model = load_bert_model()
     tokens = bert_tokenizer(text, return_tensors='pt', padding=True, truncation=True, max_length=256)
     output = bert_model(**tokens)
     scores = output.logits.softmax(dim=1).detach().numpy()
@@ -337,6 +383,8 @@ def bert_predict_sentiment(text):
 
 
 def bert_sentiment(selected_user, df):
+    bert_tokenizer, bert_model = load_bert_model()
+
     temp = df
     if selected_user != "Overall":
         temp = temp[temp['user'] == selected_user]
@@ -380,10 +428,12 @@ def bert_sentiment(selected_user, df):
 def sentiment_timeline(selected_user, df, model_choice):
     # Choose model
     if model_choice == "Logistic Regression":
+        model, vectorizer = load_logreg_model()
         df['sentiment'] = df['message'].apply(lambda x: model.predict(vectorizer.transform([x]))[0])
         df['sentiment'] = df['sentiment'].replace({1: "Positive", 0: "Negative"})
 
     elif model_choice == "SVM":
+        svm_model, svm_vectorizer = load_svm_model()
         df['sentiment'] = df['message'].apply(lambda x: svm_model.predict(svm_vectorizer.transform([x]))[0])
         df['sentiment'] = df['sentiment'].replace({1: "Positive", 0: "Negative"})
 
@@ -457,13 +507,24 @@ def topic_modeling(selected_user, df, num_topics=5):
 
 # ---------------- TOXICITY DETECTION (INNOVATION) ---------------- #
 
-tox_tokenizer = AutoTokenizer.from_pretrained("unitary/toxic-bert")
-tox_model = AutoModelForSequenceClassification.from_pretrained("unitary/toxic-bert")
+# Toxic-BERT is also loaded only when toxicity analysis is first used.
+tox_tokenizer = None
+tox_model = None
 
 tox_labels = ['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate']
 
 
+def load_toxic_model():
+    global tox_tokenizer, tox_model
+    if tox_tokenizer is None or tox_model is None:
+        tox_tokenizer = AutoTokenizer.from_pretrained("unitary/toxic-bert")
+        tox_model = AutoModelForSequenceClassification.from_pretrained("unitary/toxic-bert")
+    return tox_tokenizer, tox_model
+
+
 def toxicity_analysis(selected_user, df):
+    tox_tokenizer, tox_model = load_toxic_model()
+
     temp = df.copy()
 
     if selected_user != "Overall":

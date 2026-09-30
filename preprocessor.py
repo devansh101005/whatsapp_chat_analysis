@@ -5,15 +5,37 @@ import pandas as pd
 
 
 def preprocessor(data):
-    pattern = r'\d{1,2}/\d{1,2}/\d{2},\s\d{1,2}:\d{2}\s-\s'
+    # WhatsApp exports come in two common formats:
+    #   Android:  "12/25/23, 2:30 PM - User: message"   (time can also be 24-hour like 14:30)
+    #   iPhone :  "[25/12/23, 2:30:45 PM] User: message"
+    # The patterns also allow 2 or 4 digit years and an optional AM/PM.
+    android_pattern = r'\d{1,2}/\d{1,2}/\d{2,4},\s\d{1,2}:\d{2}(?:\s?[APap][Mm])?\s-\s'
+    ios_pattern = r'\[\d{1,2}/\d{1,2}/\d{2,4},\s\d{1,2}:\d{2}(?::\d{2})?\s?[APap][Mm]\]\s'
+
+    # Use whichever format matches the uploaded file.
+    # iPhone dates are usually day-first, Android (US export) is month-first.
+    if re.search(ios_pattern, data):
+        pattern = ios_pattern
+        dayfirst = True
+    else:
+        pattern = android_pattern
+        dayfirst = False
 
     messages= re.split(pattern,data)[1:]
     dates=re.findall(pattern,data)
 
     df=pd.DataFrame({'user_message':messages,'message_date':dates})
     #df['message_date'] = pd.to_datetime(df['message_date'].str.strip(), format='%m/%d/%y, %H:%M -', errors='coerce')
-    df['message_date'] = df['message_date'].astype(str).str.strip()
-    df['message_date'] = pd.to_datetime(df['message_date'], format='%m/%d/%y, %H:%M -', errors='coerce')
+
+    # Clean the date text: drop the brackets and the " - " separator so pandas can read it
+    df['message_date'] = df['message_date'].astype(str)
+    df['message_date'] = df['message_date'].str.replace('[', '', regex=False)
+    df['message_date'] = df['message_date'].str.replace(']', '', regex=False)
+    df['message_date'] = df['message_date'].str.replace(' - ', '', regex=False)
+    df['message_date'] = df['message_date'].str.strip()
+
+    # Let pandas parse the date (works for both 24-hour and AM/PM times)
+    df['message_date'] = pd.to_datetime(df['message_date'], format='mixed', dayfirst=dayfirst, errors='coerce')
     df = df.dropna(subset=['message_date'])
 
     df.rename(columns={'message_date':'date'},inplace=True)

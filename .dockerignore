@@ -1,0 +1,11 @@
+# Things that should not go into the Docker image
+.git
+.idea
+.venv
+__pycache__
+*.pyc
+
+# Large data / generated files
+training.1600000.processed.noemoticon.csv
+chat_network.html
+*.png

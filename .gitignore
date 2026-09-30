@@ -1,5 +1,29 @@
+# Trained model files (regenerate with the training scripts)
+sentiment_model.pkl
 sentiment_vectorizer.pkl
 svm_sentiment_model.pkl
 svm_vectorizer.pkl
+
+# Training data
 training.1600000.processed.noemoticon.csv
-sentiment_model.pkl
+
+# Generated app output
+chat_network.html
+
+# Private WhatsApp chat exports (never commit real chats)
+WhatsApp Chat*.txt
+*_chat.txt
+
+# Python cache / build
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.idea/
